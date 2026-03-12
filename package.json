@@ -1,0 +1,40 @@
+{
+  "name": "cs-fundamentals",
+  "version": "1.0.0",
+  "description": "CS Fundamentals for Vibe Coders — AI 시대에 필요한 CS 기초 가이드",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "00:git": "bash 00-git/examples/git-playground.sh",
+    "01:rest-api": "node 01-network/examples/rest-api-server.js",
+    "01:jwt": "node 01-network/examples/jwt-auth-example.js",
+    "01:cors": "node 01-network/examples/cors-demo.js",
+    "01:jwt-rest": "node 01-network/examples/jwt-rest-integration.js",
+    "01:test-api": "node 01-network/examples/rest-api-test.js",
+    "02:db": "node 02-database/examples/database-basics.js",
+    "02:n+1": "node 02-database/examples/n-plus-one.js",
+    "02:explain": "node 02-database/examples/explain-demo.js",
+    "02:cursor": "node 02-database/examples/cursor-pagination.js",
+    "03:cache": "node 03-system-design/examples/cache-aside.js",
+    "03:rate-limit": "node 03-system-design/examples/rate-limiter.js",
+    "03:circuit-breaker": "node 03-system-design/examples/circuit-breaker.js",
+    "03:sliding-window": "node 03-system-design/examples/sliding-window.js",
+    "04:sql-injection": "node 04-security/examples/sql-injection-demo.js",
+    "04:xss": "node 04-security/examples/xss-demo.js",
+    "04:password": "node 04-security/examples/password-hashing.js",
+    "04:csrf": "node 04-security/examples/csrf-demo.js",
+    "05:event-loop": "node 05-concurrency/examples/event-loop-quiz.js",
+    "05:race": "node 05-concurrency/examples/race-condition-demo.js",
+    "05:deadlock": "node 05-concurrency/examples/deadlock-demo.js",
+    "05:promise": "node 05-concurrency/examples/promise-patterns.js",
+    "07:test": "node 07-testing/examples/test-runner.js",
+    "07:async-test": "node 07-testing/examples/async-test-demo.js",
+    "07:mock": "node 07-testing/examples/mock-demo.js",
+    "08:error": "node 08-error-handling/examples/error-handling-demo.js",
+    "08:retry": "node 08-error-handling/examples/retry-demo.js",
+    "08:global-handler": "node 08-error-handling/examples/global-handlers-demo.js",
+    "test": "node scripts/run-all.js"
+  }
+}

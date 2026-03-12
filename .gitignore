@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+.env
+.env.local
+.env.production
+*.log
+*.pdf
+*.pptx
+.claude/
+
+# 별도 프로젝트 (이 레포와 무관)
+cohort12/
+villagent/

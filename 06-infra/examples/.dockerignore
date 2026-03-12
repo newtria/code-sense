@@ -1,0 +1,77 @@
+# ===========================================
+# .dockerignore — Docker 빌드 시 제외할 파일
+# ===========================================
+# .dockerignore가 없으면 COPY . . 할 때 불필요한 파일이 이미지에 포함된다.
+# cs-fundamentals.md에서 "AI가 자주 하는 실수"로 지적된 항목이다.
+
+# --- 의존성 디렉토리 ---
+# node_modules를 이미지에 복사하면 OS/아키텍처 불일치로 에러 발생
+# 이미지 안에서 npm ci로 새로 설치해야 한다 (이미지 크기도 수십~수백MB 감소)
+node_modules
+
+# --- 버전 관리 ---
+# .git 디렉토리는 수백MB가 될 수 있다 (전체 커밋 히스토리 포함)
+# 이미지에 포함되면 보안 위험 — 소스코드 히스토리, 시크릿 이력 노출
+.git
+.gitignore
+
+# --- 환경 변수 / 시크릿 ---
+# .env 파일에는 DB 비밀번호, API 키 등이 포함되어 있다
+# 이미지에 포함되면 이미지를 가진 누구나 시크릿에 접근 가능
+# 실무에서는 Docker secrets 또는 환경변수로 전달해야 한다
+.env
+.env.*
+.env.local
+.env.production
+
+# --- Docker 관련 파일 ---
+# Dockerfile 자체는 실행에 불필요하며, 빌드 컨텍스트에만 필요
+# docker-compose.yml도 컨테이너 실행에는 필요 없다
+# 이들을 제외하면 빌드 캐시 무효화를 방지할 수 있다
+Dockerfile
+Dockerfile.*
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# --- 문서 ---
+# README, 문서 파일은 프로덕션 서버에 필요 없다
+# 이미지 크기 감소에 기여한다
+README.md
+*.md
+LICENSE
+docs/
+
+# --- 테스트 ---
+# 테스트 코드는 프로덕션 이미지에 포함할 이유가 없다
+# 멀티스테이지 빌드 시 테스트는 빌드 스테이지에서만 실행
+tests/
+test/
+__tests__/
+*.test.js
+*.spec.js
+coverage/
+
+# --- 로그 ---
+# 로그 파일은 런타임에 생성되는 것이며, 이미지에 포함되면 안 된다
+# 빌드 캐시도 불필요하게 무효화된다
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- IDE / OS 관련 ---
+# 개발 도구 설정은 프로덕션과 무관
+# .DS_Store(macOS) 등은 보안과 무관하지만 이미지를 지저분하게 만든다
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- CI/CD 설정 ---
+# GitHub Actions 등 CI 설정은 컨테이너 실행에 필요 없다
+.github/
+.gitlab-ci.yml
+.circleci/

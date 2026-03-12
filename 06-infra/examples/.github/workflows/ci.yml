@@ -1,0 +1,59 @@
+# GitHub Actions CI 파이프라인 예제
+# 이 파일을 레포의 .github/workflows/ 에 복사하면 자동 실행된다.
+
+name: CI
+
+# 언제 실행할 것인가
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # 린트 + 테스트 + 빌드
+  test:
+    runs-on: ubuntu-latest
+
+    # 서비스 컨테이너 (테스트용 DB)
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      # 1. 코드 체크아웃
+      - uses: actions/checkout@v4
+
+      # 2. Node.js 설정 + 캐시
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # 3. 의존성 설치
+      - run: npm ci
+
+      # 4. 린트
+      - run: npm run lint --if-present
+
+      # 5. 타입 체크
+      - run: npm run type-check --if-present
+
+      # 6. 테스트
+      - run: npm test --if-present
+        env:
+          DATABASE_URL: postgres://test:test@localhost:5432/testdb
+
+      # 7. 빌드
+      - run: npm run build --if-present

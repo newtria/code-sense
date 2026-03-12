@@ -1,0 +1,52 @@
+# Docker Compose — 개발 환경 전체 스택
+# 실행: docker compose up -d
+# 종료: docker compose down
+# 로그: docker compose logs -f
+
+services:
+  # 애플리케이션
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://user:password@db:5432/mydb
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    # 소스 변경 시 컨테이너 재시작 없이 반영 (개발용)
+    volumes:
+      - .:/app
+      - /app/node_modules  # node_modules는 컨테이너 것 사용
+
+  # PostgreSQL
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password  # 실무에서는 시크릿 매니저 사용
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # 데이터 영속화
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis (캐시, 세션)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+
+# 볼륨 정의 (컨테이너가 삭제되어도 데이터 유지)
+volumes:
+  pgdata:

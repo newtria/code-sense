@@ -1,0 +1,79 @@
+# ===========================================
+# 멀티스테이지 Dockerfile 예제
+# ===========================================
+# 빌드: docker build -f Dockerfile.multistage -t cs-demo-app:multistage .
+# 실행: docker run -p 3000:3000 cs-demo-app:multistage
+#
+# 일반 Dockerfile과 비교:
+#   일반 빌드   → devDependencies + 테스트 도구가 이미지에 남음
+#   멀티스테이지 → 프로덕션에 필요한 것만 포함 (이미지 크기 50~80% 감소)
+#
+# 왜 멀티스테이지를 쓰는가?
+#   1. 이미지 크기 감소: devDependencies, 빌드 도구가 최종 이미지에 포함되지 않음
+#   2. 보안 강화: 공격 표면(attack surface)이 줄어듦 — 불필요한 도구 없음
+#   3. 빌드와 실행 환경 분리: 빌드에 필요한 것과 실행에 필요한 것이 다르다
+
+# ===========================================
+# Stage 1: 빌드 및 테스트 단계
+# ===========================================
+# "builder"라는 이름을 붙여서 다음 스테이지에서 참조할 수 있다
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# 의존성 파일만 먼저 복사 (레이어 캐시 최적화)
+# package.json이 변경되지 않으면 npm ci를 다시 실행하지 않는다
+COPY package.json package-lock.json* ./
+
+# 모든 의존성 설치 (devDependencies 포함 — 빌드/테스트에 필요)
+RUN npm ci 2>/dev/null || echo "no dependencies to install"
+
+# 소스코드 복사
+COPY . .
+
+# 빌드 (TypeScript 컴파일, 번들링 등)
+# 실제 프로젝트에서는 여기서 npm run build를 실행한다
+# RUN npm run build
+
+# 테스트 실행 — 테스트 실패 시 이미지 빌드가 중단된다
+# 이렇게 하면 테스트를 통과한 코드만 프로덕션 이미지에 들어간다
+# RUN npm test
+
+# ===========================================
+# Stage 2: 프로덕션 단계
+# ===========================================
+# 새로운 깨끗한 이미지에서 시작 — Stage 1의 잔여물이 없다
+FROM node:20-alpine AS production
+
+# 보안: non-root 유저 설정
+# Alpine에는 'node' 유저가 이미 존재한다 (node 이미지 기본 제공)
+WORKDIR /app
+
+# 프로덕션 의존성만 설치 (devDependencies 제외)
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev 2>/dev/null || echo "no production dependencies"
+
+# Stage 1(builder)에서 빌드 결과물만 복사
+# --from=builder로 이전 스테이지의 파일을 참조한다
+# 빌드 도구, devDependencies, 테스트 코드는 복사되지 않는다
+COPY --from=builder /app/server.js ./
+# 실제 프로젝트에서는 빌드 결과물을 복사한다:
+# COPY --from=builder /app/dist ./dist
+
+# 포트 문서화
+EXPOSE 3000
+
+# 헬스체크 — 오케스트레이터가 컨테이너 상태를 확인
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD wget -q --spider http://localhost:3000/health || exit 1
+
+# non-root 유저로 전환 (보안)
+# 컨테이너가 루트로 실행되면, 탈출(container escape) 시 호스트 루트 권한 획득 가능
+USER node
+
+# NODE_ENV=production 설정
+# Express 등 프레임워크가 프로덕션 최적화를 적용한다
+ENV NODE_ENV=production
+
+# 컨테이너 시작
+CMD ["node", "server.js"]
