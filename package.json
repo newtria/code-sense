@@ -35,6 +35,9 @@
     "08:error": "node 08-error-handling/examples/error-handling-demo.js",
     "08:retry": "node 08-error-handling/examples/retry-demo.js",
     "08:global-handler": "node 08-error-handling/examples/global-handlers-demo.js",
+    "09:logging": "node 09-monitoring/examples/logging-levels.js",
+    "09:health-check": "node 09-monitoring/examples/health-check.js",
+    "09:error-tracking": "node 09-monitoring/examples/error-tracking.js",
     "test": "node scripts/run-all.js"
   }
 }

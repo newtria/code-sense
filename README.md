@@ -66,10 +66,11 @@ npm run 01:jwt
 | 6 | [인프라](./06-infra/) | 중급 | 만든 걸 세상에 내보낼 수 있는가? | `Dockerfile` `docker-compose.yml` `ci.yml` |
 | 7 | [테스트](./07-testing/) | 기초~중급 | AI가 만든 코드를 테스트로 검증할 수 있는가? | `test-runner.js` |
 | 8 | [에러 핸들링](./08-error-handling/) | 기초~중급 | 에러를 삼키지 않고 올바르게 처리하고 있는가? | `error-handling-demo.js` |
+| 9 | [모니터링](./09-monitoring/) | 중급 | 서비스 장애를 감지하고 원인을 추적할 수 있는가? | `logging-levels.js` `health-check.js` `error-tracking.js` |
 
 ## 전체 가이드
 
-**[cs-fundamentals.md](./cs-fundamentals.md)** 에 9개 챕터의 전체 내용이 하나의 문서로 정리되어 있다.
+**[cs-fundamentals.md](./cs-fundamentals.md)** 에 10개 챕터의 전체 내용이 하나의 문서로 정리되어 있다.
 
 각 챕터마다 "AI가 자주 틀리는 것" 체크리스트가 있고, 부록에는 바이브코딩 실전 리뷰 체크리스트가 포함되어 있다.
 
@@ -86,7 +87,8 @@ npm run 01:jwt
 ├── 05-concurrency/examples/    # Event Loop, Race Condition
 ├── 06-infra/examples/          # Dockerfile, docker-compose, CI/CD
 ├── 07-testing/examples/        # 미니 테스트 프레임워크
-└── 08-error-handling/examples/ # 에러 핸들링 패턴
+├── 08-error-handling/examples/ # 에러 핸들링 패턴
+└── 09-monitoring/examples/     # 로깅, 헬스체크, 에러 추적
 ```
 
 ## 설계 원칙

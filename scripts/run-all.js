@@ -36,6 +36,9 @@ const examples = [
   ["에러 핸들링", "node 08-error-handling/examples/error-handling-demo.js"],
   ["재시도 (Exponential Backoff)", "node 08-error-handling/examples/retry-demo.js"],
   ["글로벌 에러 핸들러", "node 08-error-handling/examples/global-handlers-demo.js"],
+  ["구조화된 로깅", "node 09-monitoring/examples/logging-levels.js"],
+  ["헬스체크 & 메트릭", "node 09-monitoring/examples/health-check.js"],
+  ["에러 추적 & 집계", "node 09-monitoring/examples/error-tracking.js"],
 ];
 
 const root = path.resolve(__dirname, "..");
